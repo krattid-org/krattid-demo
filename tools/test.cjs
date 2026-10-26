@@ -28,9 +28,10 @@ async function confirmFlag(page, id) {
 async function shot(page, name) { if (SHOTS) await page.screenshot({ path: path.join(SHOTS, name + '.png') }); }
 (async () => {
   br = await chromium.launch();
+  const ONLY = process.env.ONLY;
   // 1 flow + 3 csv
   const csvOut = [];
-  for (const [vn, vp] of Object.entries(VPS)) for (const id of IDS) for (const photo of id === 'textil' ? [false, true] : [false]) {
+  for (const [vn, vp] of Object.entries(ONLY === '2' ? {} : VPS)) for (const id of IDS) for (const photo of id === 'textil' ? [false, true] : [false]) {
     const c = await ctx(vp); const page = await c.newPage(); const errs = [];
     page.on('console', (m) => m.type() === 'error' && errs.push(m.text())); page.on('pageerror', (e) => errs.push(String(e)));
     const tag = `${vn}/${id}${photo ? '-foto' : ''}`;
@@ -96,7 +97,7 @@ async function shot(page, name) { if (SHOTS) await page.screenshot({ path: path.
       await open(page, id, photo);
       const P = POS[id][photo ? 'photo' : 'pdf'].rows; const n = P.length;
       for (const i of [0, Math.floor(n / 2), n - 1]) {
-        await page.tap(`.row[data-i="${i}"]`); await page.waitForTimeout(150);
+        await page.$eval(`.row[data-i="${i}"]`, (e) => e.scrollIntoView({ block: 'center' })); await page.tap(`.row[data-i="${i}"]`, { timeout: 8000 }); await page.waitForTimeout(150);
         const st = await page.$eval('#hl', (h) => ({ d: h.style.display, l: h.style.left, t: h.style.top, w: h.style.width, h: h.style.height, r: h.getAttribute('data-row') }));
         const e = P[i];
         const ok = st.d === 'block' && st.r === String(i) && Math.abs(parseFloat(st.l) - e.x * 100) < 0.01 && Math.abs(parseFloat(st.t) - e.y * 100) < 0.01 && Math.abs(parseFloat(st.w) - e.w * 100) < 0.01 && Math.abs(parseFloat(st.h) - e.h * 100) < 0.01;
@@ -111,7 +112,7 @@ async function shot(page, name) { if (SHOTS) await page.screenshot({ path: path.
   }
   // 4 throttling
   const sizes = {};
-  for (const id of ['start', ...IDS]) {
+  for (const id of (ONLY === '2' ? [] : ['start', ...IDS])) {
     const c = await ctx(VPS['ipad-portrait']); const page = await c.newPage(); const cdp = await c.newCDPSession(page);
     await cdp.send('Network.enable'); await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 150, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8 });
     await cdp.send('Network.setCacheDisabled', { cacheDisabled: true });

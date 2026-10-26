@@ -104,7 +104,7 @@ function check() {
   const img = usePhoto && ex.files.photo ? ex.files.photo : ex.files.img;
   app.innerHTML = `<h1>Bitte kurz prüfen</h1>
 <div class="chips" id="chips"></div><p class="summary" id="sum"></p>
-<div class="split"><div class="docpane" id="docpane"><div class="dochead"><span><b>${esc(ex.supplier)}</b> · ${esc(ex.kind)}</span><span><a class="btn alt" href="${ex.files.pdf}" download>PDF öffnen</a> <button type="button" class="btn alt" id="collapse">Dokument ein-/ausblenden</button></span></div>
+<div class="split"><div class="docpane" id="docpane"><div class="dochead"><span class="dtitle"><b>${esc(ex.supplier)}</b> · ${esc(ex.kind)}</span><span class="dbtns"><a class="btn alt" href="${ex.files.pdf}" download>PDF öffnen</a> <button type="button" class="btn alt" id="collapse">Dokument ausblenden</button></span></div>
 <div class="docscroll" id="docscroll"><div class="docwrap" id="docwrap"><img src="${img}" alt="${esc(ex.kind)} von ${esc(ex.supplier)}"><div class="hl" id="hl"></div></div></div></div>
 <div><div class="rows" id="rows"></div></div></div>
 <div class="bottom"><button type="button" class="btn" id="toexport">Weiter zum Export</button></div>`;
@@ -121,6 +121,7 @@ function check() {
     if (!pos || !pos.rows[i]) return;
     const b = pos.rows[i];
     pane.classList.remove('collapsed');
+    (document.getElementById('collapse') as HTMLElement).textContent = 'Dokument ausblenden';
     hl.style.display = 'block';
     hl.style.left = (b.x * 100) + '%'; hl.style.top = (b.y * 100) + '%';
     hl.style.width = (b.w * 100) + '%'; hl.style.height = (b.h * 100) + '%';
@@ -129,7 +130,11 @@ function check() {
     if (sc.scrollTo) sc.scrollTo({ top: Math.max(0, target), behavior: 'smooth' }); else sc.scrollTop = Math.max(0, target);
   };
   renderRows();
-  (document.getElementById('collapse') as HTMLElement).addEventListener('click', () => (document.getElementById('docpane') as HTMLElement).classList.toggle('collapsed'));
+  (document.getElementById('collapse') as HTMLElement).addEventListener('click', () => {
+    const pane = document.getElementById('docpane') as HTMLElement;
+    pane.classList.toggle('collapsed');
+    (document.getElementById('collapse') as HTMLElement).textContent = pane.classList.contains('collapsed') ? 'Dokument einblenden' : 'Dokument ausblenden';
+  });
   (document.getElementById('toexport') as HTMLElement).addEventListener('click', exportScreen);
   const rowsEl = document.getElementById('rows') as HTMLElement;
   rowsEl.addEventListener('click', (ev) => {

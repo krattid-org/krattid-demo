@@ -78,3 +78,8 @@ p{margin:0 0 12px}
 .next .btn{min-width:170px}
 .next .offer{background:#fff;border:2px solid var(--acc);border-radius:14px;padding:18px;font-size:20px}
 footer{margin-top:36px;color:var(--mute);font-size:16px;border-top:1px solid var(--line);padding-top:14px}
+
+.dtitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.dbtns{display:flex;gap:8px;flex-shrink:0}
+@media(max-width:640px){.dtitle{display:none}.dbtns{width:100%}.dbtns .btn{flex:1;font-size:15px;padding:6px 8px}.docscroll{max-height:32vh}}
+@media(orientation:landscape) and (min-height:500px){.dtitle{display:none}.dbtns{width:100%}.dbtns .btn{flex:1}}

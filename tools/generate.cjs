@@ -143,7 +143,7 @@ const photoWrap = (inner) => `<body style="margin:0;width:1000px;height:1320px;o
     await page.setContent(`<!doctype html><body style="margin:0">${docHtml(e, false)}</body>`);
     const grab = () => page.evaluate(() => {
       const base = document.getElementById('tilt') ? { x: 0, y: 0 } : { x: 0, y: 0 };
-      return [...document.querySelectorAll('tbody tr')].map((tr) => {
+      return [...document.querySelectorAll('table.p tbody tr')].map((tr) => {
         const r = (el) => { const b = el.getBoundingClientRect(); return [b.left, b.top, b.width, b.height]; };
         const cells = {};
         tr.querySelectorAll('[data-f]').forEach((c) => { cells[c.dataset.f] = r(c); });
@@ -162,7 +162,7 @@ const photoWrap = (inner) => `<body style="margin:0;width:1000px;height:1320px;o
     if (e.id === 'textil') {
       const p2 = await br.newPage({ viewport: { width: 1000, height: 1320 }, deviceScaleFactor: 1.5 });
       await p2.setContent("<!doctype html>"+photoWrap(docHtml(e, true)));
-      const r2 = await p2.evaluate(() => [...document.querySelectorAll('tbody tr')].map((tr) => {
+      const r2 = await p2.evaluate(() => [...document.querySelectorAll('table.p tbody tr')].map((tr) => {
         const r = (el) => { const b = el.getBoundingClientRect(); return [b.left, b.top, b.width, b.height]; };
         const cells = {}; tr.querySelectorAll('[data-f]').forEach((c) => { cells[c.dataset.f] = r(c); });
         return { row: r(tr), cells };
