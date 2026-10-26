@@ -1,0 +1,8 @@
+{
+  "name": "krattid-demo",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": { "dev": "vite", "build": "tsc --noEmit && vite build", "preview": "vite preview", "gen": "node tools/generate.cjs" },
+  "devDependencies": { "typescript": "5.5.4", "vite": "5.4.8" }
+}
