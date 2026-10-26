@@ -1,4 +1,4 @@
-// Generates fictional supplier documents (HTML -> PDF + JPEG + positions) and src/data/examples.json
+// Generates fictional supplier documents (HTML -> JPEG + positions) and src/data/examples.json
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
@@ -24,7 +24,7 @@ const ex = [];
 // 1 Ski
 {
   const L = [];
-  const add = (art, name, color, size, qty, ek) => L.push({ artnr: art, ean: ean(21), name, color, size, qty, ek });
+  const add = (art, name, color, size, qty, ek) => L.push({ artnr: art, ean: ean(21), name, brand: name.split(' ')[0], color, size, qty, ek });
   add('FW-AM88-165', 'Firnwerk Allmountain 88 Ti', 'Anthrazit', '165 cm', 2, 32900);
   add('FW-AM88-172', 'Firnwerk Allmountain 88 Ti', 'Anthrazit', '172 cm', 3, 32900);
   add('FW-AM88-179', 'Firnwerk Allmountain 88 Ti', 'Anthrazit', '179 cm', 2, 32900);
@@ -40,8 +40,7 @@ const ex = [];
   ex.push({
     id: 'ski', card: 'Ski und Bindungen', supplier: 'Firnwerk Sportvertrieb AG', addr: ['Industriestrasse 14', '6340 Baar'],
     kind: 'Lieferschein', nr: 'LS-2026-04417', kdnr: '40218', ref: 'B-2026-118 vom 02.09.2026', refLabel: 'Ihre Bestellung',
-    mwst: 'CHE-112.358.132 MWST', pay: 'Zahlbar innert 30 Tagen netto. Ware bleibt bis zur vollständigen Bezahlung Eigentum des Lieferanten.',
-    season: 'Winter 2026/27', lines: L, flag: { index: 9, field: 'size', raw: '26.5/27', suggestions: ['26.5', '27'] },
+    mwst: 'CHE-112.358.132 MWST', pay: 'Zahlbar innert 30 Tagen netto. Ware bleibt bis zur vollständigen Bezahlung Eigentum des Lieferanten.', lines: L, flag: { index: 9, field: 'size', raw: '26.5/27', suggestions: ['26.5', '27'] },
   });
 }
 // 2 Textil
@@ -57,14 +56,13 @@ const ex = [];
     const q = s === 'S' || s === 'XL' ? 1 : 2;
     const size = p === 'NG' && cc === '380' && s === 'M' ? 'M/L' : s;
     if (size === 'M/L') fi = L.length;
-    L.push({ artnr: `${p}-${cc}-${s}`, ean: ean(22), name, color: `${cc} ${cn}`, size, qty: q, ek });
+    L.push({ artnr: `${p}-${cc}-${s}`, ean: ean(22), name, brand: 'Bergflanke', color: `${cc} ${cn}`, size, qty: q, ek });
   }
   ex.push({
-    id: 'textil', card: 'Bekleidung mit Grössen', supplier: 'Bergflanke Textil GmbH', addr: ['Seestrasse 102', '8806 Bäch'],
+    id: 'textil', card: 'Bekleidung mit Grössen (Auftragsbestätigung)', supplier: 'Bergflanke Textil GmbH', addr: ['Seestrasse 102', '8806 Bäch'],
     kind: 'Auftragsbestätigung', nr: 'AB-26-10382', kdnr: '31507', ref: 'B-2026-121 vom 09.09.2026', refLabel: 'Ihre Bestellung',
     extra: 'Voraussichtlicher Liefertermin: KW 45/2026', mwst: 'CHE-224.466.881 MWST',
-    pay: 'Zahlbar innert 30 Tagen netto, 2 % Skonto innert 10 Tagen. Preise netto in CHF, exkl. MWST.',
-    season: 'Winter 2026/27', lines: L, flag: { index: fi, field: 'size', raw: 'M/L', suggestions: ['M', 'L'] },
+    pay: 'Zahlbar innert 30 Tagen netto, 2 % Skonto innert 10 Tagen. Preise netto in CHF, exkl. MWST.', lines: L, flag: { index: fi, field: 'size', raw: 'M/L', suggestions: ['M', 'L'] },
   });
 }
 // 3 E-Bikes
@@ -78,12 +76,11 @@ const ex = [];
     ['TS-TRL900-M', 'Talstrom Trail EX 900', 'Tannengrün', 'M', 'TS26-0041881', 'BAT26-5528133', 429000],
     ['TS-TRL900-L', 'Talstrom Trail EX 900', 'Tannengrün', 'L', 'TS26-O041882', 'BAT26-5528134', 429000],
   ];
-  for (const [a, n, c, s, f, bat, ek] of b) L.push({ artnr: a, ean: ean(23), name: n, color: c, size: s, qty: 1, ek, frame: f, battery: bat });
+  for (const [a, n, c, s, f, bat, ek] of b) L.push({ artnr: a, ean: ean(23), name: n, brand: 'Talstrom', color: c, size: s, qty: 1, ek, frame: f, battery: bat });
   ex.push({
     id: 'ebike', card: 'E-Bikes mit Rahmennummern', supplier: 'Talstrom E-Bikes AG', addr: ['Werkstrasse 8', '3360 Herzogenbuchsee'],
     kind: 'Lieferschein', nr: 'LS-26-007291', kdnr: '70934', ref: 'B-2026-125 vom 15.09.2026', refLabel: 'Ihre Bestellung',
-    mwst: 'CHE-337.559.204 MWST', pay: 'Zahlbar innert 20 Tagen netto. Rahmen- und Akkunummern bitte bei Wareneingang kontrollieren.',
-    season: 'Sommer 2027', lines: L, flag: { index: 5, field: 'frame', raw: 'TS26-O041882', suggestions: ['TS26-0041882'] },
+    mwst: 'CHE-337.559.204 MWST', pay: 'Zahlbar innert 20 Tagen netto. Rahmen- und Akkunummern bitte bei Wareneingang kontrollieren.', lines: L, flag: { index: 5, field: 'frame', raw: 'TS26-O041882', suggestions: ['TS26-0041882'] },
   });
 }
 for (const e of ex) {
@@ -123,7 +120,7 @@ table.p{width:100%;border-collapse:collapse}
 </style>
 <div class="hd"><div class="sup"><b>${esc(e.supplier)}</b><div>${e.addr.join(', ')}</div><div>Schweiz</div></div><div style="text-align:right;color:#444">${e.id === 'ski' ? 'www.firnwerk.example' : e.id === 'textil' ? 'www.bergflanke.example' : 'www.talstrom.example'}<br>Tel. +41 00 000 00 00</div></div>
 <div class="meta"><div class="cust"><small>${esc(e.supplier)} · ${e.addr.join(' · ')}</small>${customer.map(esc).join('<br>')}</div>
-<table class="kv"><tr><td>${e.kind}-Nr.</td><td><b>${e.nr}</b></td></tr><tr><td>Datum</td><td>27.10.2026</td></tr><tr><td>Kunden-Nr.</td><td>${e.kdnr}</td></tr><tr><td>${e.refLabel}</td><td>${e.ref}</td></tr><tr><td>Auftrags-Nr.</td><td>AU-${e.kdnr}-${e.nr.slice(-3)}</td></tr></table></div>
+<table class="kv"><tr><td>${e.kind}-Nr.</td><td><b>${e.nr}</b></td></tr><tr><td>Datum</td><td>21.10.2026</td></tr><tr><td>Kunden-Nr.</td><td>${e.kdnr}</td></tr><tr><td>${e.refLabel}</td><td>${e.ref}</td></tr><tr><td>Auftrags-Nr.</td><td>AU-${e.kdnr}-${e.nr.slice(-3)}</td></tr></table></div>
 <h1>${e.kind}</h1>
 <table class="p"><thead><tr><th style="width:28px">Pos.</th><th style="width:92px">Art.-Nr.</th><th style="width:104px">EAN</th><th>Bezeichnung</th><th style="width:92px">Farbe</th><th style="width:54px" class="c">Grösse/Länge</th><th style="width:38px" class="r">Menge</th><th style="width:62px" class="r">EK netto CHF</th><th style="width:66px" class="r">Total</th></tr></thead><tbody>${rows}</tbody></table>
 <table class="tot"><tr><td>Warenwert netto</td><td>CHF ${chf(e.netC)}</td></tr><tr><td>MWST 8.1 %</td><td>CHF ${chf(e.mwstC)}</td></tr><tr><td>Total CHF</td><td>${chf(e.grossC)}</td></tr></table>
@@ -139,7 +136,7 @@ const photoWrap = (inner) => `<body style="margin:0;width:1000px;height:1320px;o
   const br = await chromium.launch();
   const positions = {};
   for (const e of ex) {
-    const page = await br.newPage({ viewport: { width: 794, height: 1123 }, deviceScaleFactor: 2 });
+    const page = await br.newPage({ viewport: { width: 794, height: 1123 }, deviceScaleFactor: 3.02 });
     await page.setContent(`<!doctype html><body style="margin:0">${docHtml(e, false)}</body>`);
     const grab = () => page.evaluate(() => {
       const base = document.getElementById('tilt') ? { x: 0, y: 0 } : { x: 0, y: 0 };
@@ -156,26 +153,29 @@ const photoWrap = (inner) => `<body style="margin:0;width:1000px;height:1320px;o
       return { ...f(o.row), cells };
     });
     const rows = await grab();
-    positions[e.id] = { pdf: { w: 794, h: 1123, rows: rel(rows, 794, 1123) } };
-    await page.screenshot({ path: path.join(out, e.id + '.jpg'), type: 'jpeg', quality: 70 });
-    await page.pdf({ path: path.join(out, `lieferschein-${e.id}.pdf`), width: '794px', height: '1123px', printBackground: true });
+    positions[e.id] = { doc: { w: 794, h: 1123, rows: rel(rows, 794, 1123).map((r) => ({ q: [r.x, r.y, r.x + r.w, r.y, r.x + r.w, r.y + r.h, r.x, r.y + r.h].map((v) => +v.toFixed(4)) })) } };
+    await page.screenshot({ path: path.join(out, e.id + '.jpg'), type: 'jpeg', quality: 72 });
     if (e.id === 'textil') {
-      const p2 = await br.newPage({ viewport: { width: 1000, height: 1320 }, deviceScaleFactor: 1.5 });
+      const p2 = await br.newPage({ viewport: { width: 1000, height: 1320 }, deviceScaleFactor: 2.4 });
       await p2.setContent("<!doctype html>"+photoWrap(docHtml(e, true)));
-      const r2 = await p2.evaluate(() => [...document.querySelectorAll('table.p tbody tr')].map((tr) => {
-        const r = (el) => { const b = el.getBoundingClientRect(); return [b.left, b.top, b.width, b.height]; };
-        const cells = {}; tr.querySelectorAll('[data-f]').forEach((c) => { cells[c.dataset.f] = r(c); });
-        return { row: r(tr), cells };
-      }));
-      positions[e.id].photo = { w: 1000, h: 1320, rows: rel(r2, 1000, 1320) };
-      await p2.screenshot({ path: path.join(out, e.id + '-foto.jpg'), type: 'jpeg', quality: 68 });
+      // photo is tilted: project each row's four corners through the same transform with marker elements
+      const r2 = await p2.evaluate((rows0) => {
+        const sheet = document.getElementById('sheet');
+        const mk = (x, y) => { const d = document.createElement('i'); d.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:0;height:0`; sheet.appendChild(d); return d; };
+        return rows0.map((o) => {
+          const [x, y, w, h] = o.row;
+          return [mk(x, y), mk(x + w, y), mk(x + w, y + h), mk(x, y + h)].map((d) => { const b = d.getBoundingClientRect(); return [b.left, b.top]; });
+        });
+      }, rows);
+      positions[e.id].photo = { w: 1000, h: 1320, rows: r2.map((q) => ({ q: q.reduce((a, pt) => a.concat([+(pt[0] / 1000).toFixed(4), +(pt[1] / 1320).toFixed(4)]), []) })) };
+      await p2.screenshot({ path: path.join(out, e.id + '-foto.jpg'), type: 'jpeg', quality: 62 });
     }
   }
   await br.close();
   fs.writeFileSync(path.join(out, 'positions.json'), JSON.stringify(positions));
   const data = ex.map((e) => ({
-    id: e.id, card: e.card, supplier: e.supplier, kind: e.kind, nr: e.nr, season: e.season, lines: e.lines, flag: e.flag,
-    net: e.net, files: { img: `docs/${e.id}.jpg`, photo: e.id === 'textil' ? 'docs/textil-foto.jpg' : null, pdf: `docs/lieferschein-${e.id}.pdf` },
+    id: e.id, card: e.card, supplier: e.supplier, kind: e.kind, nr: e.nr, lines: e.lines, flag: e.flag,
+    net: e.net, files: { img: `docs/${e.id}.jpg`, photo: e.id === 'textil' ? 'docs/textil-foto.jpg' : null },
   }));
   fs.writeFileSync(path.join(root, 'src/data/examples.json'), JSON.stringify(data));
   console.log('ok', data.map((d) => d.id + ':' + d.lines.length).join(' '));
