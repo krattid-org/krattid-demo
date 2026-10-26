@@ -133,6 +133,7 @@ async function pinch(page, cdp, cx, cy, d0, d1) {
       await page.tap('#tonext'); await page.waitForSelector('.next');
       const nt = await page.textContent('.next');
       check('1', nt.includes('Mit Ihren eigenen Lieferscheinen testen') && nt.includes('Der Testlauf kostet CHF 290. Wenn wir danach zusammenarbeiten, ziehe ich den Betrag ab. Ganz unverbindlich.') && nt.includes('079 894 00 09') && nt.includes('peeter.mauring@krattid.com') && nt.includes('Mehr über mich (krattid.com)') && nt.includes('Peeter Mauring · bis Frühling 2026 bei Ski Service Corvatsch im Verkauf und Bootfitting. Ich komme gern persönlich vorbei.'), tag + ' last screen texts');
+      await page.waitForFunction(() => { const i = document.querySelector('.who img'); return i && i.complete; }, null, { timeout: 8000 }).catch(() => {});
       const ph = await page.$eval('.who img', (i) => ({ ok: i.complete && i.naturalWidth > 0 }));
       check('1', ph.ok, tag + ' portrait not loaded');
       if (SHOTS && id === 'textil' && vn === 'ipad-portrait' && !photo) await shot(page, '4-last');
